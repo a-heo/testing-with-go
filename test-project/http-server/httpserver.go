@@ -4,14 +4,25 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"encoding/json"
 )
 
+const jsonContentType ="application/json"
+
+//store player score info
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
+	GetLeague() []Player
 }
 
+//store player individual data
+type Player struct {
+	Name string
+	Wins int
+}
 
+//http interface for player info
 type PlayerServer struct {
 	store PlayerStore
 	http.Handler	//instead of router *http.ServeMux embedding http.Handler methods into struct so serveHTTP method no longer needed
@@ -19,10 +30,6 @@ type PlayerServer struct {
 
 //routing creation and direction
 func NewPlayerServer(store PlayerStore) *PlayerServer {
-	// p := &PlayerServer{
-	// 	store,
-	// 	http.NewServeMux(),
-	// }
 	p := new(PlayerServer)
 
 	p.store = store
@@ -37,8 +44,11 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 	return p
 }
 
+
 func (p *PlayerServer) handleLeagues(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+	//look into this code 
+	w.Header().Set("content-type", jsonContentType)
+	json.NewEncoder(w).Encode(p.store.GetLeague())
 }
 
 func (p *PlayerServer) handlePlayers(w http.ResponseWriter, r *http.Request) {
