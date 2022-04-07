@@ -21,8 +21,22 @@ type PlayerServer struct {
 }
 
 func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	player := strings.TrimPrefix(r.URL.Path, "/players/")
+	router := http.NewServeMux()
 
+	router.Handle("/league", http.HandlerFunc(p.handleLeagues))
+
+	router.Handle("/players/", http.HandlerFunc(p.handlePlayers))
+	
+	router.ServeHTTP(w, r)
+}
+
+func (p *PlayerServer) handleLeagues(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
+
+func (p *PlayerServer) handlePlayers(w http.ResponseWriter, r *http.Request) {
+	player := strings.TrimPrefix(r.URL.Path, "/players/")
+	
 	switch r.Method {
 	case http.MethodPost:
 		p.processWin(w, player)
@@ -31,7 +45,7 @@ func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func(p *PlayerServer) showScore(w http.ResponseWriter, player string) {
+func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 	score := p.store.GetPlayerScore(player)
 
 	if score == 0 {
@@ -42,7 +56,7 @@ func(p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 	fmt.Fprint(w, score)
 }
 
-func(p *PlayerServer) processWin(w http.ResponseWriter, player string) {
+func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 	p.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
 }
