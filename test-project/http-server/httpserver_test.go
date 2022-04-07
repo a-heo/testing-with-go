@@ -5,11 +5,17 @@ import (
 	"net/http/httptest"
 	"net/http"
 	"fmt"
+	"encoding/json"
 )
 
 type StubPlayerStore struct{
 	scores map[string]int
 	winCalls []string
+}
+
+type Player struct {
+	Name string
+	Wins int
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
@@ -30,7 +36,7 @@ func TestGETPlayers(t *testing.T) {
 		},
 		nil,
 	}
-	server := &PlayerServer{&store}
+	server := NewPlayerServer(&store)
 
 	t.Run("returns Pepper's score", func(t *testing.T) {
 		request := newGetScoreRequest("Pepper")
@@ -67,7 +73,7 @@ func TestStoreWins(t *testing.T) {
 		map[string]int{},
 		nil,
 	}
-	server :=&PlayerServer{&store}
+	server := NewPlayerServer(&store)
 
 	t.Run("it records wins when POST", func(t *testing.T) {
 		player :="Pepper"
@@ -91,7 +97,7 @@ func TestStoreWins(t *testing.T) {
 //test for get all calls
 func TestLeague(t *testing.T) {
 	store := StubPlayerStore{}
-	server := &PlayerServer{&store}
+	server := NewPlayerServer(&store)
 
 	t.Run("returns 200 on /league", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
@@ -99,8 +105,14 @@ func TestLeague(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		assertStatus(t, response.Code, http.StatusOK)
+		//parse json into data structure and testing instead of testing string to avoid problems 
+		var got []Player
+		err := json.NewDecoder(response.Body).Decode(&got)
 
+		if err != nil {
+			t.Fatalf("Unable to parse response from server %q into slice of player, '%v'", response.Body, err)
+		}
+		assertStatus(t, response.Code, http.StatusOK)
 	})
 }
 

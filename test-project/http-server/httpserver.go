@@ -6,28 +6,35 @@ import (
 	"strings"
 )
 
-// func ListenAndServe(addr string, handler Handler) error
-
-// type Handler interface {
-// 	ServeHTTP(ResponseWriter, *Request)
-// }
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
 }
 
+
 type PlayerServer struct {
 	store PlayerStore
+	http.Handler	//instead of router *http.ServeMux embedding http.Handler methods into struct so serveHTTP method no longer needed
 }
 
-func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+//routing creation and direction
+func NewPlayerServer(store PlayerStore) *PlayerServer {
+	// p := &PlayerServer{
+	// 	store,
+	// 	http.NewServeMux(),
+	// }
+	p := new(PlayerServer)
+
+	p.store = store
+
 	router := http.NewServeMux()
-
 	router.Handle("/league", http.HandlerFunc(p.handleLeagues))
-
+	
 	router.Handle("/players/", http.HandlerFunc(p.handlePlayers))
 	
-	router.ServeHTTP(w, r)
+	p.Handler = router
+
+	return p
 }
 
 func (p *PlayerServer) handleLeagues(w http.ResponseWriter, r *http.Request) {
