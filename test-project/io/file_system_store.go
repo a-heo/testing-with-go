@@ -41,7 +41,19 @@ func (f *FileSystemPlayerStore) RecordWin(name string)  {
 
 //construct and store league as val into struct to be used as reads during initialization 
 func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error){
+	
 	file.Seek(0, 0)
+	//returns stats on file 
+	info, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("problem getting file info from file %s, %v", file.Name(), err)
+	}
+	//if size is empty write an empty json array and seek to start again
+	if info.Size() == 0 {
+		file.Write([]byte("[]"))
+		file.Seek(0,0)
+	}
+
 	league, error := NewLeague(file)
 
 	if error != nil {
