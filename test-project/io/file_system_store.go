@@ -18,25 +18,23 @@ func (f *FileSystemPlayerStore) GetLeague() League{
 }
 
 func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
-	var wins int
-	for _, player := range f.GetLeague() {
-		if player.Name == name {
-			wins = player.Wins
-			break
-		}
+	league := f.GetLeague()
+	player := league.Find(name)
+
+	if player != nil {
+		return player.Wins
 	}
-	return wins
+	return 0
 }
 
 func (f *FileSystemPlayerStore) RecordWin(name string)  {
 	league := f.GetLeague()
+	player := league.Find(name)
 
-	//updating index i rather than player[win] because we're ranging over a slice so we're looping over a copy of element. need to get reference actual value to change value 
-	for i, player := range league {
-		if player.Name == name {
-			league[i].Wins++
-		}
+	if player != nil {
+		player.Wins++
 	}
+
 	f.database.Seek(0,0)
 	json.NewEncoder(f.database).Encode(league)
 }
