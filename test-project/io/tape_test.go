@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 )
 
-func TestTape_WRite(t *testing.T) {
+func TestTape_Write(t *testing.T) {
 	file, clean := createTempFile(t, "12345")
 	defer clean()
 
