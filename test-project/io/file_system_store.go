@@ -12,14 +12,11 @@ type FileSystemPlayerStore struct{
 }
 
 func (f *FileSystemPlayerStore) GetLeague() League {
-	//still unsure of seek's input
-	// f.database.Seek(0, 0)
-	// league, _ := NewLeague(f.database)
+
 	return f.league
 }
 
 func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
-	// league := f.GetLeague()
 	player := f.league.Find(name)
 
 	if player != nil {
@@ -29,7 +26,6 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 }
 
 func (f *FileSystemPlayerStore) RecordWin(name string)  {
-	// league := f.GetLeague()
 	player := f.league.Find(name)
 
 	if player != nil {
@@ -42,7 +38,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string)  {
 	json.NewEncoder(f.database).Encode(f.league)
 }
 
-//construct and store league as val into struct to be used as reads 
+//construct and store league as val into struct to be used as reads during initialization 
 func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
 	database.Seek(0, 0)
 	league, _ := NewLeague(database)
