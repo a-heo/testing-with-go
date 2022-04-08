@@ -39,19 +39,30 @@ func (f *FileSystemPlayerStore) RecordWin(name string)  {
 	f.database.Encode(f.league)
 }
 
-//construct and store league as val into struct to be used as reads during initialization 
-func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error){
-	
+//separate fun from NFSPS to only initialise the file
+func initialisePLayerDBFile(file *os.File) error {
 	file.Seek(0, 0)
 	//returns stats on file 
 	info, err := file.Stat()
 	if err != nil {
-		return nil, fmt.Errorf("problem getting file info from file %s, %v", file.Name(), err)
+		return fmt.Errorf("problem getting file info from file %s, %v", file.Name(), err)
 	}
 	//if size is empty write an empty json array and seek to start again
 	if info.Size() == 0 {
 		file.Write([]byte("[]"))
 		file.Seek(0,0)
+	}
+	
+	return nil
+}
+
+//construct and store league as val into struct to be used as reads during initialization 
+func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error){
+	
+	err := initialisePLayerDBFile(file)
+
+	if err != nil {
+		return nil, fmt.Errorf("problem initialising playder db file, %v", err)
 	}
 
 	league, error := NewLeague(file)
