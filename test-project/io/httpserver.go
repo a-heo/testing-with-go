@@ -13,7 +13,7 @@ const jsonContentType ="application/json"
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 //store player individual data
@@ -25,7 +25,8 @@ type Player struct {
 //http interface for player info
 type PlayerServer struct {
 	store PlayerStore
-	http.Handler	//instead of router *http.ServeMux embedding http.Handler methods into struct so serveHTTP method no longer needed
+	http.Handler	
+	//instead of router *http.ServeMux embedding http.Handler methods into struct so serveHTTP method no longer needed
 }
 
 //routing creation and direction
@@ -76,14 +77,4 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 	p.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
-}
-
-func GetPlayerScore(name string) string {
-	if name == "Pepper" {
-		return "20"
-	}
-	if name == "Floyd" {
-		return "10"
-	}
-	return ""
 }
