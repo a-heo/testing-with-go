@@ -2,7 +2,6 @@ package main
 
 import (
 	"testing"
-	"io"
 	"io/ioutil"
 	"os"
 )
@@ -90,7 +89,7 @@ func TestFileSystemStore(t *testing.T) {
 }
 
 //create temp file to use for testing
-func createTempFile(t testing.TB, initialData string) (io.ReadWriteSeeker, func()) {
+func createTempFile(t testing.TB, initialData string) (*os.File, func()) {
 	t.Helper()
 
 	tmpfile, err := ioutil.TempFile("", "db")

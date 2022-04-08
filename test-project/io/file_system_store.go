@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"encoding/json"
+	"os"
 )
 
 //modified to writer only instead of readwriteseeeker to reduce future bugs
@@ -39,7 +40,7 @@ func (f *FileSystemPlayerStore) RecordWin(name string)  {
 }
 
 //construct and store league as val into struct to be used as reads during initialization 
-func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
+func NewFileSystemPlayerStore(database *os.File) *FileSystemPlayerStore {
 	database.Seek(0, 0)
 	league, _ := NewLeague(database)
 	return &FileSystemPlayerStore{
