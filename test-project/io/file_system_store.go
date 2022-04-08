@@ -2,11 +2,12 @@ package main
 
 import (
 	"io"
+	"encoding/json"
 )
 
 //readseeker allows us to read multiple times compared to reader(only once)
 type FileSystemPlayerStore struct{
-	database io.ReadSeeker
+	database io.ReadWriteSeeker
 }
 
 func (f *FileSystemPlayerStore) GetLeague() []Player{
@@ -24,4 +25,17 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 		}
 	}
 	return wins
+}
+
+func (f *FileSystemPlayerStore) RecordWin(name string)  {
+	league := f.GetLeague()
+
+	//updating index i rather than player[win] because we're ranging over a slice so we're looping over a copy of element. need to get reference actual value to change value 
+	for i, player := range league {
+		if player.Name == name {
+			league[i].Wins++
+		}
+	}
+	f.database.Seek(0,0)
+	json.NewEncoder(f.database).Encode(league)
 }
