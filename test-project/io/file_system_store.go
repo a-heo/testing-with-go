@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"fmt"
+	"sort"
 )
 
 //modified to point to jsonencoder created from initialization
@@ -13,7 +14,9 @@ type FileSystemPlayerStore struct{
 }
 
 func (f *FileSystemPlayerStore) GetLeague() League {
-
+	sort.Slice(f.league, func(i, j int) bool {
+		return f.league[i].Wins > f.league[j].Wins
+	})
 	return f.league
 }
 
