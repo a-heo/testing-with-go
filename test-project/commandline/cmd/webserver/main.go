@@ -8,7 +8,7 @@ import (
 )
 
 //file for db
-const dbFileName = "game.db.json"
+const dbFileName = "../../game.db.json"
 
 func main() {
 	//create file for db, second arg defines permission (read and write or create if it doesn't exist), 3rd arg sets permission for files (all users can read and write) 
@@ -18,13 +18,13 @@ func main() {
 		log.Fatalf("problem opening %s %v", dbFileName, err)
 	}
 
-	store, err := NewFileSystemPlayerStore(db)
+	store, err := poker.NewFileSystemPlayerStore(db)
 
 	if err != nil {
 		log.Fatalf("could not create file system player store, %v", err)
 	}
 	
-	server := NewPlayerServer(store)
+	server := poker.NewPlayerServer(store)
 
 	if err := http.ListenAndServe(":5002", server); err != nil {
 		log.Fatalf("could not listen on port 5000 %v", err)		
