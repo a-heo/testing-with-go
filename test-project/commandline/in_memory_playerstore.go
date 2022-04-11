@@ -1,4 +1,4 @@
-package main 
+package poker 
 
 //initializes empty player store
 func NewInMemoryPlayerStore() *InMemoryPlayerStore {
