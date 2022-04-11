@@ -2,6 +2,8 @@ package poker
 
 import (
 	"io"
+	"bufio"
+	"strings"
 )
 
 type CLI struct {
@@ -10,5 +12,14 @@ type CLI struct {
 }
 
 func (cli *CLI) PlayPoker() {
-	cli.playerStore.RecordWin("Chris")
+	//read input from io reader
+	reader := bufio.NewScanner(cli.in)
+	//read up to a newline
+	reader.Scan()
+	//text method returns string the scanner read to
+	cli.playerStore.RecordWin(extractWinner(reader.Text()))
+}
+
+func extractWinner(userInput string) string {
+	return strings.Replace(userInput, " wins", "", 1)
 }
