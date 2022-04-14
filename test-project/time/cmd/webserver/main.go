@@ -1,7 +1,7 @@
 package main
 
 import (
-	poker "github.com/a-heo/testing-with-go/tree/main/test-project/commandline"
+	poker "github.com/a-heo/testing-with-go/tree/main/test-project/time"
 	"log"
 	"net/http"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	poker 	"github.com/a-heo/testing-with-go/tree/main/test-project/commandline"
+	poker 	"github.com/a-heo/testing-with-go/tree/main/test-project/time"
 )
 
 const dbFileName = "../../game.db.json"
