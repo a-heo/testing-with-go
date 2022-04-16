@@ -4,6 +4,8 @@ import (
 	"testing"
 	"net/http/httptest"
 	"reflect"
+	"time"
+	"fmt"
 )
 
 type StubPlayerStore struct{
@@ -80,4 +82,24 @@ func AssertNoError(t testing.TB, err error) {
 	if err != nil {
 		t.Fatalf("didn't expect error but got one, %v", err)
 	}
+}
+
+//holds information when alert is scheduled
+type ScheduledAlert struct {
+	At time.Duration
+	Amount int
+}
+
+func (s ScheduledAlert) String() string {
+	return fmt.Sprintf("%d chips at %v", s.Amount, s.At)
+}
+
+//allows you to spy on ScheduledAlert on calls
+type SpyBlindAlerter struct {
+	Alerts []ScheduledAlert
+}
+
+//records alerts that have been scheduled
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+	s.Alerts = append(s.Alerts, ScheduledAlert{at, amount})
 }

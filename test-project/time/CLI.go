@@ -4,25 +4,22 @@ import (
 	"bufio"
 	"io"
 	"strings"
-	"time"
 	"fmt"
 	"strconv"
 )
 
+//construct Game with existing dependencies and interpret user input as method invocations for Game 
 type CLI struct {
 	in *bufio.Scanner
 	out io.Writer
-	game *Game
+	game Game
 }
 
-func NewCLI(store PlayerStore, in io.Reader, out io.Writer, alerter BlindAlerter) *CLI {
+func NewCLI(in io.Reader, out io.Writer, game Game) *CLI {
 	return &CLI{
 		in: bufio.NewScanner(in),
 		out: out,
-		game: &Game{
-			alerter: alerter,
-			store: store,
-		},
+		game: game,
 	}
 }
 
