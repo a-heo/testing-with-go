@@ -24,12 +24,18 @@ func NewCLI(in io.Reader, out io.Writer, game Game) *CLI {
 }
 
 const PlayerPrompt = "please enter the number of players: "
+const BadPlayerInputErrMsg = "Bad value received for number of players, please try again with a number"
 
 func (cli *CLI) PlayPoker() {
 		fmt.Fprint(cli.out, PlayerPrompt)
 
 		numOfPlayersInput := cli.readLine()
-		numOfPlayers, _ := strconv.Atoi(strings.Trim(numOfPlayersInput, "\n"))
+		numOfPlayers, err := strconv.Atoi(strings.Trim(numOfPlayersInput, "\n"))
+
+		if err != nil {
+			fmt.Fprint(cli.out, BadPlayerInputErrMsg)
+			return
+		}
 
 		cli.game.Start(numOfPlayers)
 
